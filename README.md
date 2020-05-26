@@ -6,11 +6,11 @@ Simple (or more fittingly: stupid) image clustering [*sic*] is a very barebones 
 ### Usage
 
 `$(python) sic.py [-h] -i INFILE [-c NUM_CLUSTERS] [-r NUM_RUNS] [-e EXTENSION] [--version]`
-
-simple image clustering based on k-means clustering
-
-optional arguments:
-  -h, --help            show this help message and exit
+  
+simple image clustering based on k-means clustering  
+  
+optional arguments:  
+  -h, --help            show this help message and exit  
   -i INFILE, --infile INFILE
                         you must provide an input image to cluster it
   -c NUM_CLUSTERS, --clusters NUM_CLUSTERS
