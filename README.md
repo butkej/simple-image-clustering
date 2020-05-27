@@ -1,11 +1,26 @@
 # Simple Image Clustering
 Simple (or more fittingly: stupid) image clustering [*sic*] is a very barebones command line tool written in Python 3.  
+
 ### Dependencies
-*sic* requires opencv2 to perform clustering and manipulate files.
+*sic* requires opencv2 (and also numpy) to perform clustering and manipulate files.
+
+### Installation
+To use this command line tool simply clone it into any directory you want:  
+```
+$ git clone https://github.com/butkej/simple-image-clustering.git
+```
+
+Afterwards, simply change into the downloaded directory, make the script executable and run it:  
+```
+$ cd simple-image-clustering/
+$ chmod +x install.sh
+$ ./install.sh
+```
+This will pip install the package into the currently activated environment and makes the script executable by calling only `sic` itself with its respective arguments.
 
 ### Usage
 
-`$ python sic.py [-h] -i INFILE [-c NUM_CLUSTERS] [-r NUM_RUNS] [-e EXTENSION] [--version]`
+`$ (python) sic(.py) [-h] -i INFILE [-c NUM_CLUSTERS] [-r NUM_RUNS] [-e EXTENSION] [--version]`
   
 simple image clustering based on k-means clustering  
   
