@@ -44,10 +44,11 @@ def load_data(args):
         img_shape = all_img.shape
         print(img_shape)
         all_img = all_img.reshape(-1, img_shape[2])
+        og_img = np.copy(all_img)
         all_img = np.float32(all_img)
         print(all_img.shape)
 
-        return all_img
+        return all_img, og_img
 
     elif args.spectral_switch == False:
         # load all RGB images in a folder and convert them to grayscale
@@ -73,31 +74,55 @@ def clustering(img, args):
     centers = np.uint8(centers)
     result = centers[labels.flatten()]
     result_img = result.reshape((img_shape))
+    print(result_img.shape)
 
-    return result_img
+    return result_img, labels
 
 def save_img(img, args):
+    if args.spectral_switch == True:
+        result_img = np.mean(img, axis=2)
+        print(result_img.shape)
+
+        print('Saving clustered image to ...')
+        savepath = str(args.infile)
+        savepath = savepath + str(args.num_clusters) + '_CLUSTERS_ALL_WVN.' + str(args.extension)
+        print(savepath)
+        cv2.imwrite(savepath, result_img)
+
+    elif args.spectral_switch == False:
+        print('Saving clustered image to ...')
+        savepath = str(args.infile).split('.')
+        savepath = savepath[0] + '_' + str(args.num_clusters) + '_CLUSTERS.' + str(args.extension)
+        print(savepath)
+        result_img = cv2.cvtColor(result_img, cv2.COLOR_RGB2BGR)
+        cv2.imwrite(savepath, result_img)
+
+def spectral_selection(img, choice, labels):
+    import matplotlib.pyplot as plt
+
+    masked_img = np.copy(img)
+    labels = labels.flatten()
+    selection = masked_img[labels == choice]
     #TODO
-    print('Saving clustered image to ...')
-    savepath = str(args.infile).split('.')
-    savepath = savepath[0] + '_' + str(args.num_clusters) + '_CLUSTERS.' + str(args.extension)
-    print(savepath)
-    result_img = cv2.cvtColor(result_img, cv2.COLOR_RGB2BGR)
-    cv2.imwrite(savepath, result_img)
-    print('Done!')
-    #TODO
 
 
 
+#######################################
 
 if __name__ == "__main__":
     args = parse_args()
     print('Called with arguments:')
     print(args)
 
-    img = load_data(args)
+    img, og_img = load_data(args)
 
-    result_img = clustering(img, args)
+    result_img, labels = clustering(img, args)
 
     save_img(result_img, args)
+
+    if args.spectral_switch == True:
+        choice = int(input('Select the cluster of choice to extract a spectrum. [integer] : '))
+        spectral_selection(og_img, choice, labels)
+
+    print('Done!')
 

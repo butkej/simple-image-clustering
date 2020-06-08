@@ -7,7 +7,7 @@ setup(
         description = 'simple image clustering',
         #package_dir = {'': 'sic'},
         packages = ['sic'],
-        install_requires =['numpy', 'opencv-python'],
+        install_requires =['numpy', 'opencv-python', 'matplotlib'],
         #entry_points = {'console_scripts': ['sic=sic.sic:main'],},
         scripts=['bin/sic']
         )
