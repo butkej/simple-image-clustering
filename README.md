@@ -36,3 +36,5 @@ optional arguments:
 The spectral option takes an input folder (containing single wavenumber images) instead of a single input image!  
 All .tif images in this folder will be loaded sequentially, converted into grayscale images and concatenated.  
 This new array is then clustered to achieve a clustering across all spectral wavelenghts in the folder.
+
+By examining the saved clustering image the user can then choose a suitable cluster (prompted during script execution). The spectra from this cluster are then extracted, plotted and saved as well.

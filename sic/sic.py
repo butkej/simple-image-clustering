@@ -103,7 +103,17 @@ def spectral_selection(img, choice, labels):
     masked_img = np.copy(img)
     labels = labels.flatten()
     selection = masked_img[labels == choice]
-    #TODO
+    selection = np.array(selection)
+    mean_intensities=[]
+    for i in selection.T:
+        x = np.mean(i)
+        mean_intensities.append(x)
+
+    print(len(mean_intensities))
+    plt.plot(mean_intensities)
+    savepath = str(args.infile)
+    savepath = savepath + str(args.num_clusters) + '_CLUSTERS_ALL_WVN' + '_spectra_of_cluster_' + str(choice) + str(args.extension)
+    plt.savefig(savepath, dpi=600)
 
 
 
