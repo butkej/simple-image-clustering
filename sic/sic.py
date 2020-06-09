@@ -94,7 +94,7 @@ def save_img(img, args):
         savepath = str(args.infile).split('.')
         savepath = savepath[0] + '_' + str(args.num_clusters) + '_CLUSTERS.' + str(args.extension)
         print(savepath)
-        result_img = cv2.cvtColor(result_img, cv2.COLOR_RGB2BGR)
+        result_img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
         cv2.imwrite(savepath, result_img)
 
 def spectral_selection(img, choice, labels):
@@ -124,7 +124,10 @@ if __name__ == "__main__":
     print('Called with arguments:')
     print(args)
 
-    img, og_img = load_data(args)
+    if args.spectral_switch == True:
+        img, og_img = load_data(args)
+    elif args.spectral_switch == False:
+        img = load_data(args)
 
     result_img, labels = clustering(img, args)
 
