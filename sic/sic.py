@@ -104,17 +104,26 @@ def spectral_selection(img, choice, labels):
     labels = labels.flatten()
     selection = masked_img[labels == choice]
     selection = np.array(selection)
+
+    # plotting
     mean_intensities=[]
     for i in selection.T:
         x = np.mean(i)
         mean_intensities.append(x)
 
-    print(len(mean_intensities))
     plt.plot(mean_intensities)
+    plt.xlabel('WVN')
+    plt.ylabel('SRS -  Cluster intensity (a.u.)')
     savepath = str(args.infile)
     savepath = savepath + str(args.num_clusters) + '_CLUSTERS_ALL_WVN' + '_spectra_of_cluster_' + str(choice) + '.' + str(args.extension)
     plt.savefig(savepath, dpi=600)
 
+    # .txt file creation
+    txtpath = str(args.infile)+ str(args.num_clusters) + '_CLUSTERS_ALL_WVN' + '_spectra_of_cluster_' + str(choice) + '.txt' 
+    f = open(txtpath, 'w')
+    for mean in mean_intensities:
+        f.write('%s\n' % mean)
+    f.close()
 
 
 #######################################
@@ -134,6 +143,7 @@ if __name__ == "__main__":
     save_img(result_img, args)
 
     if args.spectral_switch == True:
+        print('\n')
         choice = int(input('Select the cluster of choice to extract a spectrum. [integer] : '))
         spectral_selection(og_img, choice, labels)
 
