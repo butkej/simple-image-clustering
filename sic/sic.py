@@ -112,7 +112,7 @@ def spectral_selection(img, choice, labels):
     print(len(mean_intensities))
     plt.plot(mean_intensities)
     savepath = str(args.infile)
-    savepath = savepath + str(args.num_clusters) + '_CLUSTERS_ALL_WVN' + '_spectra_of_cluster_' + str(choice) + str(args.extension)
+    savepath = savepath + str(args.num_clusters) + '_CLUSTERS_ALL_WVN' + '_spectra_of_cluster_' + str(choice) + '.' + str(args.extension)
     plt.savefig(savepath, dpi=600)
 
 
