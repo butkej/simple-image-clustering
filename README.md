@@ -42,4 +42,4 @@ The clustered image is saved by converting cluster labels to a distinct color pa
 By examining the saved clustering image the user can then choose a suitable cluster (prompted during script execution). The spectra from this cluster are then extracted, plotted and saved as well.  
 Additionally all cluster spectra are saved to an extra folder individually.
 
-![Color Palette](color_palette.png)
+![Color Palette](/bph/puredata1/bioinfdata/user/butjos/work/code/simple-image-clustering/color_palette.png?raw=True "Color Palette")
