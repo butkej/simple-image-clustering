@@ -37,7 +37,9 @@ optional arguments:
 The spectral option takes an input folder (containing single wavenumber images) instead of a single input image!  
 All .tif images in this folder will be loaded sequentially, converted into grayscale images and concatenated.  
 This new array is then clustered to achieve a clustering across all spectral wavelenghts in the folder.
-The clustered image is saved by converting cluster labels to a distict color palette. This leads to a maximum of 18 clusters.  
+The clustered image is saved by converting cluster labels to a distinct color palette. This leads to a maximum of 22 clusters.  
 
 By examining the saved clustering image the user can then choose a suitable cluster (prompted during script execution). The spectra from this cluster are then extracted, plotted and saved as well.  
 Additionally all cluster spectra are saved to an extra folder individually.
+
+![Color Palette](color_palette.png)
