@@ -1,7 +1,7 @@
 from setuptools import setup
 setup(
         name = 'sic',
-        version = '0.2',
+        version = '1.0',
         author = 'Joshua Butke',
         author_email= 'butkej@gmail.com',
         description = 'simple image clustering',
