@@ -3,13 +3,11 @@ import argparse
 import os
 import numpy as np
 import cv2
-import tkinter
-from tkinter import filedialog
 
 def parse_args():
     parser = argparse.ArgumentParser(prog='sic', description='simple image clustering based on k-means clustering')
 
-    # parser.add_argument('-i', '--infile', type=str, required=True, help='you must provide an input image to cluster it')
+    parser.add_argument('-i', '--infile', type=str, required=True, help='you must provide an input image to cluster it')
     parser.add_argument('-s', '--spectral', dest='spectral_switch', action='store_true', help='switch to spectral clustering mode (see documentation for details)')
     parser.add_argument('-c','--clusters', type=int, default=5, dest='num_clusters', help='choose the number of clusters to produce (default is 5) [integer]')
     parser.add_argument('-r', '--runs', type=int, default=10, dest='num_runs', help='choose the number of clustering runs to attempt (default is 10) [integer]')
@@ -26,15 +24,9 @@ def load_data(args):
     an array of (x, y, WVN)
     '''
     if args.spectral_switch == True:
-
-        root = tkinter.Tk()
-        root.withdraw()
-        path = filedialog.askdirectory(parent=root)
-        root.destroy()
-
         # load all RGB images in a folder and convert them to grayscale
         all_img = []
-        # path = args.infile
+        path = args.infile
         os.chdir(path)
         print('Loading images from path:')
         print(str(os.getcwd()))
@@ -45,7 +37,7 @@ def load_data(args):
             filename = os.fsdecode(img_file)
             print(str(filename))
             if filename.endswith('.tif'):
-                img = cv2.imread(filename, 1)
+                img = cv2.imread(filename)
                 img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
                 all_img.append(img)
                 print(img.shape)
@@ -67,16 +59,10 @@ def load_data(args):
         return all_img, og_img
 
     elif args.spectral_switch == False:
-
-        root = tkinter.Tk()
-        root.withdraw()
-        path = filedialog.askopenfilename(parent=root)
-        root.destroy()
         # load single RGB image
         print('Loading input image...')
-        # print(args.infile)
-        # img = cv2.imread(str(args.infile))
-        img = cv2.imread(str(path), 1)
+        print(args.infile)
+        img = cv2.imread(str(args.infile))
         img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 
         # preprocessing
