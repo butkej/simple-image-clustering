@@ -208,38 +208,39 @@ def save_img(img, args):
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
         cv2.imwrite(savepath, img)
 
-def spectral_selection(img, choice, labels):
-    ''' enables the use to select a cluster numerically.
-    Intensities of this cluster are extracted from the original stacked spectral image and exported
-    as a spectrum (plot) and a txt file with the exact values
-    '''
-    import matplotlib.pyplot as plt
-
-    masked_img = np.copy(img)
-    labels = labels.flatten()
-    selection = masked_img[labels == choice]
-    selection = np.array(selection)
-
-    # plotting
-    mean_intensities=[]
-    for i in selection.T:
-        x = np.mean(i)
-        mean_intensities.append(x)
-
-    plt.plot(mean_intensities)
-    plt.xlabel('WVN')
-    plt.ylabel('SRS -  Cluster intensity (a.u.)')
-    plt.title('Mean spectral intensities for cluster nr. ' + str(choice))
-    savepath = str(args.infile)
-    savepath = savepath + str(args.num_clusters) + '_CLUSTERS_ALL_WVN' + '_spectra_of_cluster_' + str(choice) + '.' + str(args.extension)
-    plt.savefig(savepath, dpi=600)
-
-    # .txt file creation
-    txtpath = str(args.infile)+ str(args.num_clusters) + '_CLUSTERS_ALL_WVN' + '_spectra_of_cluster_' + str(choice) + '.txt' 
-    f = open(txtpath, 'w')
-    for mean in mean_intensities:
-        f.write('%s\n' % mean)
-    f.close()
+# the following function is commented out because of its replacement of merge_clusters and the saving of all cluster spectra
+#def spectral_selection(img, choice, labels):
+#    ''' enables the use to select a cluster numerically.
+#    Intensities of this cluster are extracted from the original stacked spectral image and exported
+#    as a spectrum (plot) and a txt file with the exact values
+#    '''
+#    import matplotlib.pyplot as plt
+#
+#    masked_img = np.copy(img)
+#    labels = labels.flatten()
+#    selection = masked_img[labels == choice]
+#    selection = np.array(selection)
+#
+#    # plotting
+#    mean_intensities=[]
+#    for i in selection.T:
+#        x = np.mean(i)
+#        mean_intensities.append(x)
+#
+#    plt.plot(mean_intensities)
+#    plt.xlabel('WVN')
+#    plt.ylabel('SRS -  Cluster intensity (a.u.)')
+#    plt.title('Mean spectral intensities for cluster nr. ' + str(choice))
+#    savepath = str(args.infile)
+#    savepath = savepath + str(args.num_clusters) + '_CLUSTERS_ALL_WVN' + '_spectra_of_cluster_' + str(choice) + '.' + str(args.extension)
+#    plt.savefig(savepath, dpi=600)
+#
+#    # .txt file creation
+#    txtpath = str(args.infile)+ str(args.num_clusters) + '_CLUSTERS_ALL_WVN' + '_spectra_of_cluster_' + str(choice) + '.txt' 
+#    f = open(txtpath, 'w')
+#    for mean in mean_intensities:
+#        f.write('%s\n' % mean)
+#    f.close()
 
 def all_mean_spectra(img, labels):
     ''' plot mean spectra of all clusters and write corresponding text files for all clusters
@@ -276,6 +277,20 @@ def all_mean_spectra(img, labels):
         f.close()
 
 
+def merge_clusters(labels, choice_list):
+    '''
+    This function takes a list of cluster labels (eg. 2,5,9) which can be aquired by user input.
+    Then it merges all corresponding labels into a new single cluster with the assignment 21 or RED.
+    '''
+    labels = labels.flatten()
+    for i in choice_list
+        labels[labels == i] = 21
+
+    return labels
+
+
+
+
 
 #######################################
 
@@ -301,9 +316,29 @@ if __name__ == "__main__":
     if args.spectral_switch == True:
         all_mean_spectra(og_img, labels)
 
+        # merge clusters
         print('\n')
-        choice = int(input('Select the cluster of choice to extract a spectrum. [integer] : '))
-        spectral_selection(og_img, choice, labels)
+        print('Saved clustered image and spectra of each cluster. You are now able to merge clusters if you want.')
+        print('\n')
+
+        #below is commented out as spectral selection function was removed
+        #choice = int(input('Select the cluster of choice to extract a spectrum. [integer] : '))
+        #spectral_selection(og_img, choice, labels)
+
+        chosen_clusters = []
+        while True:
+            choice = input('Input the number of a cluster you want to merge >>> ')
+            if choice == '' or choice == 'end':
+                break
+            elif choice.isdigit():
+                chosen_clusters.append(int(choice))
+            else: print('Please try again. You need to enter a single number or nothing (or "end") if you want to stop')
+
+        merged_labels = merge_clusters(chosen_clusters)
+        result_merged_img = false_color_image(merged_labels)
+        args.num_clusters = 'MERGED'
+        save_img(result_merged_img, args)
+        all_mean_spectra(og_img, merged_labels)
 
     print('Done!')
 

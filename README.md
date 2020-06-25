@@ -37,9 +37,13 @@ optional arguments:
 The spectral option takes an input folder (containing single wavenumber images) instead of a single input image!  
 All .tif images in this folder will be loaded sequentially, converted into grayscale images and concatenated.  
 This new array is then clustered to achieve a clustering across all spectral wavelenghts in the folder.
-The clustered image is saved by converting cluster labels to a distinct color palette. This leads to a maximum of 22 clusters.  
+The clustered image is saved by converting cluster labels to a distinct color palette. This leads to a maximum of 21 clusters (Red is reserved for merging as cluster color 22).  
 
 By examining the saved clustering image the user can then choose a suitable cluster (prompted during script execution). The spectra from this cluster are then extracted, plotted and saved as well.  
 Additionally all cluster spectra are saved to an extra folder individually.
 
 ![Color Palette](color_palette.png?raw=True "Color Palette")
+
+##### Merging clusters
+After computation of the first false color image and the saving of all mean spectra of all clusters the user is asked if he wants to merge clusters.  
+Here, each cluster that should be merged can be given or just press enter to abort further clusters. These clusters are then merged and set to a new color (=RED) in the new false color image. Spectra are extracted and saved again.
