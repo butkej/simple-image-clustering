@@ -9,6 +9,7 @@ def parse_args():
 
     parser.add_argument('-i', '--infile', type=str, required=True, help='you must provide an input image to cluster it')
     parser.add_argument('-s', '--spectral', dest='spectral_switch', action='store_true', help='switch to spectral clustering mode (see documentation for details)')
+    parser.add_argument('-n', '--normalize', dest='normalization_switch', action='store_true', help='Enable normalization of input images across their spectral WVN range. Recommended to use in conjunction with the spectral option.')
     parser.add_argument('-c','--clusters', type=int, default=5, dest='num_clusters', help='choose the number of clusters to produce (default is 5) [integer]')
     parser.add_argument('-r', '--runs', type=int, default=10, dest='num_runs', help='choose the number of clustering runs to attempt (default is 10) [integer]')
     parser.add_argument('-e', '--extension', type=str, default='png', dest='extension', help='choose the filename extension of the saved clustered image (default is png) [string]')
@@ -45,6 +46,7 @@ def load_data(args):
         # preprocessing
         # stack all images (grayscale (x,y) ) together into a single (x,y,z) array
         all_img = np.stack(all_img, axis=-1)
+
         ###
         # GLOBAL DECLARATION!!
         ###
@@ -54,6 +56,17 @@ def load_data(args):
         all_img = all_img.reshape(-1, img_shape[2])
         og_img = np.copy(all_img)
         all_img = np.float32(all_img)
+
+        # normalization
+        if args.normalization_switch == True:
+            all_img_min = all_img.min()#axis=0) #uncomment to normalize across columns instead, eg. normalize each WVN independently
+            all_img_max = all_img.max()#(axis=0)
+            all_img = (all_img - all_img_min) / (all_img_max - all_img_min)
+
+            og_img_min = og_img.min()#axis=0)
+            og_img_max = og_img.max()#axis=0)
+            og_img = (og_img - og_img_min) / (og_img_max - og_img_min)
+
         print(all_img.shape)
 
         return all_img, og_img
@@ -195,7 +208,7 @@ def save_img(img, args):
     if args.spectral_switch == True:
         print('Saving clustered image to ...')
         savepath = str(args.infile)
-        savepath = savepath + str(args.num_clusters) + '_CLUSTERS_ALL_WVN.' + str(args.extension)
+        savepath = savepath + str(args.num_clusters) + '_CLUSTERS_ALL_WVN_' + str(args.normalization_switch) + '.' + str(args.extension)
         print(savepath)
         img = cv2.cvtColor(img,cv2.COLOR_RGB2BGR)
         cv2.imwrite(savepath, img)
@@ -248,7 +261,7 @@ def all_mean_spectra(img, labels):
     creates a new folder and writes the data into this folder.
     '''
     import matplotlib.pyplot as plt
-    os.mkdir((str(args.infile) + 'mean_spectra_per_cluster_FOR_A_CLUSTERING_OF_' + str(args.num_clusters)))
+    os.mkdir((str(args.infile) + str(args.normalization_switch) + '_mean_spectra_per_cluster_FOR_A_CLUSTERING_OF_' + str(args.num_clusters)))
 
     masked_img = np.copy(img)
     labels = labels.flatten()
@@ -266,12 +279,12 @@ def all_mean_spectra(img, labels):
         plt.xlabel('WVN')
         plt.ylabel('SRS -  Cluster intensity (a.u.)')
         plt.title('Mean spectral intensities for cluster nr. ' + str(i))
-        savepath = str(args.infile) + 'mean_spectra_per_cluster_FOR_A_CLUSTERING_OF_' + str(args.num_clusters) + '/'+ str(args.num_clusters) + '_CLUSTERS_ALL_WVN' + '_spectra_of_cluster_' + str(i) + '.' + str(args.extension)
+        savepath = str(args.infile) + str(args.normalization_switch) + '_mean_spectra_per_cluster_FOR_A_CLUSTERING_OF_' + str(args.num_clusters) + '/'+ str(args.num_clusters) + '_CLUSTERS_ALL_WVN' + '_spectra_of_cluster_' + str(i) + '.' + str(args.extension)
         plt.savefig(savepath, dpi=600)
         plt.clf()
 
         # .txt file creation
-        txtpath =  str(args.infile) + 'mean_spectra_per_cluster_FOR_A_CLUSTERING_OF_' + str(args.num_clusters) + '/'+ str(args.num_clusters) + '_CLUSTERS_ALL_WVN' + '_spectra_of_cluster_' + str(i) + '.txt' 
+        txtpath =  str(args.infile) + str(args.normalization_switch) + '_mean_spectra_per_cluster_FOR_A_CLUSTERING_OF_' + str(args.num_clusters) + '/'+ str(args.num_clusters) + '_CLUSTERS_ALL_WVN' + '_spectra_of_cluster_' + str(i) + '.txt' 
         f = open(txtpath, 'w')
         for mean in mean_intensities:
             f.write('%s\n' % mean)
@@ -302,7 +315,7 @@ def all_mean_spectra_after_merging(img, labels):
     It's a bit hacky but it works.
     '''
     import matplotlib.pyplot as plt
-    os.mkdir((str(args.infile) + 'mean_spectra_per_cluster_FOR_A_CLUSTERING_OF_' + str(args.num_clusters) + '_after_MERGING'))
+    os.mkdir((str(args.infile) + str(args.normalization_switch) + '_mean_spectra_per_cluster_FOR_A_CLUSTERING_OF_' + str(args.num_clusters) + '_after_MERGING'))
 
     masked_img = np.copy(img)
     labels = labels.flatten()
@@ -327,12 +340,12 @@ def all_mean_spectra_after_merging(img, labels):
         plt.xlabel('WVN')
         plt.ylabel('SRS -  Cluster intensity (a.u.)')
         plt.title('Mean spectral intensities for cluster nr. ' + str(i))
-        savepath = str(args.infile) + 'mean_spectra_per_cluster_FOR_A_CLUSTERING_OF_' + str(args.num_clusters) + '_after_MERGING' + '/'+ str(args.num_clusters) + '_CLUSTERS_ALL_WVN' + '_spectra_of_cluster_' + str(i) + '.' + str(args.extension)
+        savepath = str(args.infile) + str(args.normalization_switch) + '_mean_spectra_per_cluster_FOR_A_CLUSTERING_OF_' + str(args.num_clusters) + '_after_MERGING' + '/'+ str(args.num_clusters) + '_CLUSTERS_ALL_WVN' + '_spectra_of_cluster_' + str(i) + '.' + str(args.extension)
         plt.savefig(savepath, dpi=600)
         plt.clf()
 
         # .txt file creation
-        txtpath =  str(args.infile) + 'mean_spectra_per_cluster_FOR_A_CLUSTERING_OF_' + str(args.num_clusters) + '_after_MERGING' + '/'+ str(args.num_clusters) + '_CLUSTERS_ALL_WVN' + '_spectra_of_cluster_' + str(i) + '.txt' 
+        txtpath =  str(args.infile) + str(args.normalization_switch) + '_mean_spectra_per_cluster_FOR_A_CLUSTERING_OF_' + str(args.num_clusters) + '_after_MERGING' + '/'+ str(args.num_clusters) + '_CLUSTERS_ALL_WVN' + '_spectra_of_cluster_' + str(i) + '.txt' 
         f = open(txtpath, 'w')
         for mean in mean_intensities:
             f.write('%s\n' % mean)
@@ -351,6 +364,11 @@ if __name__ == "__main__":
         img, og_img = load_data(args)
     elif args.spectral_switch == False:
         img = load_data(args)
+
+    if args.normalization_switch == True:
+        args.normalization_switch = 'Normalized'
+    elif args.normalization_switch == False:
+        args.normalization_switch = 'NotNormalized'
 
     result_img, labels = clustering(img, args)
 
